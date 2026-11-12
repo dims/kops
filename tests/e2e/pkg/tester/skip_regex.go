@@ -52,6 +52,12 @@ func (t *Tester) setSkipRegexFlag() error {
 		skipRegex += "|Pod.InPlace.Resize.Container"
 	}
 
+	if k8sVersion.String() == "1.38.0-beta.0" {
+		// The test binary of this tag fails while the old pods of a Recreate rollout terminate.
+		// Fixed by https://github.com/kubernetes/kubernetes/pull/144056, first in v1.38.0-rc.0.
+		skipRegex += "|StatefulSet.Recreate.Update.Strategy.should.recreate.stuck.pods"
+	}
+
 	// Skip broken test, see https://github.com/kubernetes/kubernetes/pull/133262
 	skipRegex += "|blackbox.*should.not.be.able.to.pull.image.from.invalid.registry"
 	skipRegex += "|blackbox.*should.be.able.to.pull.from.private.registry.with.secret"
